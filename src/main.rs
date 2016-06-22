@@ -7,6 +7,7 @@ use clap::{Arg, App};
 
 use std::fs::File;
 use std::io::Write;
+use std::path::{Path, PathBuf};
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 
@@ -23,9 +24,15 @@ fn main () {
                                 .help("Path to level file")
                                 .takes_value(true)
                                 .required(true))
+                            .arg(Arg::with_name("output")
+                                .short("o")
+                                .long("output")
+                                .value_name("PATH")
+                                .help("Path to save image file [default: <input>.svg]")
+                                .takes_value(true))
                             .arg(Arg::with_name("svg")
                                 .long("svg")
-                                .help("Specify SVG as output type [Default]"))
+                                .help("Specify SVG as output type [default]"))
                             .arg(Arg::with_name("ground")
                                 .short("g")
                                 .long("ground")
@@ -82,7 +89,17 @@ fn main () {
                                 .takes_value(true))
                             .get_matches();
 
-    let input_file = matches.value_of("input").unwrap();
+    let input_file = Path::new(matches.value_of("input").unwrap());
+    let mut tmp;
+    let output_file;
+    if let Some(path) = matches.value_of("output") {
+        output_file = Path::new(path);
+    } else {
+        tmp = PathBuf::from(input_file);
+        tmp.set_extension("svg");
+        output_file = Path::new(tmp.as_path());
+    }
+
     let ground_color = matches.value_of("ground").unwrap();
     let sky_color = matches.value_of("sky").unwrap();
     let apple_color = matches.value_of("apple").unwrap();
@@ -91,7 +108,7 @@ fn main () {
     let player_color = matches.value_of("player").unwrap();
     let scale = matches.value_of("scale").unwrap().parse::<usize>().unwrap();
     let pad = matches.value_of("pad").unwrap().parse::<f64>().unwrap();
-    let level = Level::load(input_file).unwrap();
+    let level = Level::load(input_file.to_str().unwrap()).unwrap();
 
     // Figure out max and min coordinates.
     let mut max_x = 0_f64;
@@ -157,6 +174,6 @@ fn main () {
     buffer.extend_from_slice(b"</svg>");
 
     // Write buffer to file.
-    let mut file = File::create("test.svg").unwrap();
+    let mut file = File::create(output_file).unwrap();
     file.write_all(&buffer).unwrap();
 }
