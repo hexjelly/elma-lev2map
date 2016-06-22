@@ -35,6 +35,7 @@ fn main () {
     let mut max_y = 0_f64;
     let mut min_x = 0_f64;
     let mut min_y = 0_f64;
+    
     for polygon in &level.polygons {
         if !polygon.grass {
             for vertex in &polygon.vertices {
@@ -44,6 +45,13 @@ fn main () {
                 if vertex.y > max_y { max_y = vertex.y; }
             }
         }
+    }
+
+    for object in &level.objects {
+        if object.position.x < min_x { min_x = object.position.x; }
+        if object.position.x > max_x { max_x = object.position.x; }
+        if object.position.y < min_y { min_y = object.position.y; }
+        if object.position.y > max_y { max_y = object.position.y; }
     }
 
     let mut buffer = vec![];
