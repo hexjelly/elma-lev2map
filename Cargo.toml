@@ -1,0 +1,8 @@
+[package]
+name = "elma-lev2map"
+version = "0.1.0"
+authors = ["Roger Andersen <hexjelly@hexjelly.com>"]
+
+[dependencies]
+elma = { git = "https://github.com/hexjelly/elma-rust" }
+clap = "^2.6.0"

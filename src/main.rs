@@ -1,0 +1,53 @@
+extern crate elma;
+extern crate clap;
+
+use elma::lev::Level;
+use clap::{Arg, App};
+
+use std::fs::File;
+use std::io::Write;
+
+const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+
+fn main () {
+    // Take care of command line arguments.
+    let matches = App::new("elma-lev2map")
+                            .version(VERSION)
+                            .author("Roger Andersen <hexjelly@hexjelly.com>")
+                            .about("Converts Elasto Mania level files to images")
+                            .arg(Arg::with_name("input")
+                                .short("i")
+                                .long("input")
+                                .value_name("PATH")
+                                .help("Path to level file")
+                                .takes_value(true)
+                                .required(true))
+                            .arg(Arg::with_name("svg")
+                                .long("svg")
+                                .help("Specify SVG as output type [Default]"))
+                            .get_matches();
+
+    let input_file = matches.value_of("input").unwrap();
+    let level = Level::load(input_file).unwrap();
+
+    let mut buffer = vec![];
+    buffer.extend_from_slice(br#"<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000">"#);
+    buffer.extend_from_slice(br#"<rect width="100%" height="100%" style="fill: #181048;" />"#);
+    buffer.extend_from_slice(br##"<g fill-rule="evenodd" fill="#3078bc" stroke="black" stroke-width="1">"##);
+    for polygon in level.polygons {
+        if !polygon.grass {
+            buffer.extend_from_slice(br#"<path d=""#);
+            for (n, vertex) in polygon.vertices.iter().enumerate() {
+                if n == 0 { buffer.extend_from_slice(b"M"); }
+                else { buffer.extend_from_slice(b"L"); }
+                let pos = format!("{} {} ", vertex.x*20_f64, vertex.y*20_f64 );
+                buffer.extend_from_slice(pos.as_bytes());
+            }
+            buffer.extend_from_slice(br#"Z" />"#);
+        }
+    }
+    buffer.extend_from_slice(b"</g></svg>");
+
+    let mut file = File::create("test.svg").unwrap();
+    file.write_all(&buffer).unwrap();
+}
