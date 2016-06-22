@@ -47,9 +47,10 @@ fn main () {
     }
 
     let mut buffer = vec![];
-    buffer.extend_from_slice(br#"<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800">"#);
-    buffer.extend_from_slice(br#"<rect width="100%" height="100%" style="fill: #181048;" />"#);
-    buffer.extend_from_slice(br##"<g fill-rule="evenodd" fill="#3078bc" stroke="black" stroke-width="1">"##);
+    buffer.extend_from_slice(format!("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{}\" height=\"{}\">",
+                                    (max_x + min_x.abs()) * 20_f64, (max_y + min_y.abs()) * 20_f64).as_bytes());
+    buffer.extend_from_slice(format!("<rect width=\"100%\" height=\"100%\" style=\"fill: {};\" />", "#181048").as_bytes());
+    buffer.extend_from_slice(format!("<g fill-rule=\"evenodd\" fill=\"{}\" stroke=\"white\" stroke-width=\"1\">", "#3078bc").as_bytes());
     for polygon in &level.polygons {
         if !polygon.grass {
             buffer.extend_from_slice(br#"<path d=""#);
