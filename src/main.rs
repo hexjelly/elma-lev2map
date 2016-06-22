@@ -91,19 +91,23 @@ fn main () {
                                 .long("stroke")
                                 .value_name("THICKNESS")
                                 .help("Line stroke around objects")
-                                .default_value("1")
+                                .default_value("0")
                                 .takes_value(true))
                             .get_matches();
 
     let input_file = Path::new(matches.value_of("input").unwrap());
-    let mut tmp;
-    let output_file;
+    let mut output_file;
     if let Some(path) = matches.value_of("output") {
-        output_file = Path::new(path);
+        output_file = PathBuf::from(path);
+        if output_file.is_dir() {
+            if let Some(file_name) = input_file.file_name() {
+                output_file.push(file_name);
+                output_file.set_extension("svg");
+            }
+        }
     } else {
-        tmp = PathBuf::from(input_file);
-        tmp.set_extension("svg");
-        output_file = Path::new(tmp.as_path());
+        output_file = PathBuf::from(input_file);
+        output_file.set_extension("svg");
     }
 
     let ground_color = matches.value_of("ground").unwrap();
