@@ -30,17 +30,33 @@ fn main () {
     let input_file = matches.value_of("input").unwrap();
     let level = Level::load(input_file).unwrap();
 
+    // Figure out max and min coordinates.
+    let mut max_x = 0_f64;
+    let mut max_y = 0_f64;
+    let mut min_x = 0_f64;
+    let mut min_y = 0_f64;
+    for polygon in &level.polygons {
+        if !polygon.grass {
+            for vertex in &polygon.vertices {
+                if vertex.x < min_x { min_x = vertex.x; }
+                if vertex.x > max_x { max_x = vertex.x; }
+                if vertex.y < min_y { min_y = vertex.y; }
+                if vertex.y > max_y { max_y = vertex.y; }
+            }
+        }
+    }
+
     let mut buffer = vec![];
-    buffer.extend_from_slice(br#"<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000">"#);
+    buffer.extend_from_slice(br#"<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800">"#);
     buffer.extend_from_slice(br#"<rect width="100%" height="100%" style="fill: #181048;" />"#);
     buffer.extend_from_slice(br##"<g fill-rule="evenodd" fill="#3078bc" stroke="black" stroke-width="1">"##);
-    for polygon in level.polygons {
+    for polygon in &level.polygons {
         if !polygon.grass {
             buffer.extend_from_slice(br#"<path d=""#);
             for (n, vertex) in polygon.vertices.iter().enumerate() {
                 if n == 0 { buffer.extend_from_slice(b"M"); }
                 else { buffer.extend_from_slice(b"L"); }
-                let pos = format!("{} {} ", vertex.x*20_f64, vertex.y*20_f64 );
+                let pos = format!("{} {} ", (vertex.x + min_x.abs()) * 20_f64, (vertex.y + min_y.abs()) * 20_f64);
                 buffer.extend_from_slice(pos.as_bytes());
             }
             buffer.extend_from_slice(br#"Z" />"#);
