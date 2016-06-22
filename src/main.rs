@@ -47,23 +47,23 @@ fn main () {
     }
 
     let mut buffer = vec![];
-    buffer.extend_from_slice(format!("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{}\" height=\"{}\">",
+    buffer.extend_from_slice(format!("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{}\" height=\"{}\">\n",
                                     (max_x + min_x.abs()) * 20_f64, (max_y + min_y.abs()) * 20_f64).as_bytes());
-    buffer.extend_from_slice(format!("<rect width=\"100%\" height=\"100%\" style=\"fill: {};\" />", "#181048").as_bytes());
-    buffer.extend_from_slice(format!("<g fill-rule=\"evenodd\" fill=\"{}\" stroke=\"white\" stroke-width=\"1\">", "#3078bc").as_bytes());
+    buffer.extend_from_slice(format!("\t<rect width=\"100%\" height=\"100%\" style=\"fill: {};\" />\n", "#181048").as_bytes());
+    buffer.extend_from_slice(format!("\t<g fill-rule=\"evenodd\" fill=\"{}\" stroke=\"white\" stroke-width=\"1\">\n", "#3078bc").as_bytes());
     for polygon in &level.polygons {
         if !polygon.grass {
-            buffer.extend_from_slice(br#"<path d=""#);
+            buffer.extend_from_slice(b"\t\t<path d=\"");
             for (n, vertex) in polygon.vertices.iter().enumerate() {
                 if n == 0 { buffer.extend_from_slice(b"M"); }
                 else { buffer.extend_from_slice(b"L"); }
                 let pos = format!("{} {} ", (vertex.x + min_x.abs()) * 20_f64, (vertex.y + min_y.abs()) * 20_f64);
                 buffer.extend_from_slice(pos.as_bytes());
             }
-            buffer.extend_from_slice(br#"Z" />"#);
+            buffer.extend_from_slice(b"Z\" />\n");
         }
     }
-    buffer.extend_from_slice(b"</g></svg>");
+    buffer.extend_from_slice(b"\t</g>\n</svg>");
 
     let mut file = File::create("test.svg").unwrap();
     file.write_all(&buffer).unwrap();
