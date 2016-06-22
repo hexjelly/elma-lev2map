@@ -87,6 +87,12 @@ fn main () {
                                 .help("Player color, in rgb, hex or name")
                                 .default_value("green")
                                 .takes_value(true))
+                            .arg(Arg::with_name("stroke")
+                                .long("stroke")
+                                .value_name("THICKNESS")
+                                .help("Line stroke around objects")
+                                .default_value("1")
+                                .takes_value(true))
                             .get_matches();
 
     let input_file = Path::new(matches.value_of("input").unwrap());
@@ -106,6 +112,7 @@ fn main () {
     let flower_color = matches.value_of("flower").unwrap();
     let killer_color = matches.value_of("killer").unwrap();
     let player_color = matches.value_of("player").unwrap();
+    let stroke = matches.value_of("stroke").unwrap();
     let scale = matches.value_of("scale").unwrap().parse::<usize>().unwrap();
     let pad = matches.value_of("pad").unwrap().parse::<f64>().unwrap();
     let level = Level::load(input_file.to_str().unwrap()).unwrap();
@@ -168,7 +175,7 @@ fn main () {
             ObjectType::Player => player_color
         };
         buffer.extend_from_slice(format!("<circle cx=\"{}\" cy=\"{}\" r=\"{}\" stroke=\"{}\" stroke-width=\"{}\" fill=\"{}\" />\n",
-                                        x, y, OBJECT_RADIUS * scale as f64, "black", "1", color).as_bytes());
+                                        x, y, OBJECT_RADIUS * scale as f64, "black", stroke, color).as_bytes());
     }
 
     buffer.extend_from_slice(b"</svg>");
