@@ -23,12 +23,14 @@ fn main () {
                                 .value_name("PATH")
                                 .help("Path to level file")
                                 .takes_value(true)
+                                .use_delimiter(false)
                                 .required(true))
                             .arg(Arg::with_name("output")
                                 .short("o")
                                 .long("output")
                                 .value_name("PATH")
                                 .help("Path to save image file [default: <input>.svg]")
+                                .use_delimiter(false)
                                 .takes_value(true))
                             .arg(Arg::with_name("svg")
                                 .long("svg")
@@ -38,6 +40,7 @@ fn main () {
                                 .long("ground")
                                 .value_name("COLOR")
                                 .help("Ground fill color, in rgb, hex or name")
+                                .use_delimiter(false)
                                 .default_value("#181048")
                                 .takes_value(true))
                             .arg(Arg::with_name("sky")
@@ -45,25 +48,29 @@ fn main () {
                                 .long("sky")
                                 .value_name("COLOR")
                                 .help("Sky fill color, in rgb, hex or name")
+                                .use_delimiter(false)
                                 .default_value("#3078bc")
                                 .takes_value(true))
                             .arg(Arg::with_name("pad")
                                 .long("pad")
-                                .value_name("UNITS")
+                                .value_name("SIZE")
                                 .help("Canvas padding")
                                 .default_value("10")
+                                .use_delimiter(false)
                                 .takes_value(true))
                             .arg(Arg::with_name("scale")
                                 .long("scale")
-                                .value_name("UNITS")
+                                .value_name("SIZE")
                                 .help("Scale of SVG")
                                 .default_value("20")
+                                .use_delimiter(false)
                                 .takes_value(true))
                             .arg(Arg::with_name("apple")
                                 .short("a")
                                 .long("apple")
                                 .value_name("COLOR")
                                 .help("Apple color, in rgb, hex or name")
+                                .use_delimiter(false)
                                 .default_value("red")
                                 .takes_value(true))
                             .arg(Arg::with_name("flower")
@@ -71,6 +78,7 @@ fn main () {
                                 .long("flower")
                                 .value_name("COLOR")
                                 .help("Flower color, in rgb, hex or name")
+                                .use_delimiter(false)
                                 .default_value("white")
                                 .takes_value(true))
                             .arg(Arg::with_name("killer")
@@ -78,6 +86,7 @@ fn main () {
                                 .long("killer")
                                 .value_name("COLOR")
                                 .help("Killer color, in rgb, hex or name")
+                                .use_delimiter(false)
                                 .default_value("black")
                                 .takes_value(true))
                             .arg(Arg::with_name("player")
@@ -85,13 +94,39 @@ fn main () {
                                 .long("player")
                                 .value_name("COLOR")
                                 .help("Player color, in rgb, hex or name")
+                                .use_delimiter(false)
                                 .default_value("green")
                                 .takes_value(true))
                             .arg(Arg::with_name("stroke")
                                 .long("stroke")
-                                .value_name("THICKNESS")
+                                .value_name("SIZE")
                                 .help("Line stroke around objects")
+                                .use_delimiter(false)
                                 .default_value("0")
+                                .takes_value(true))
+                            .arg(Arg::with_name("height")
+                                .long("height")
+                                .value_name("SIZE")
+                                .help("Height")
+                                .use_delimiter(false)
+                                .takes_value(true))
+                            .arg(Arg::with_name("width")
+                                .long("width")
+                                .value_name("SIZE")
+                                .help("Width")
+                                .use_delimiter(false)
+                                .takes_value(true))
+                            .arg(Arg::with_name("max_height")
+                                .long("maxheight")
+                                .value_name("SIZE")
+                                .help("Max height")
+                                .use_delimiter(false)
+                                .takes_value(true))
+                            .arg(Arg::with_name("max_width")
+                                .long("maxwidth")
+                                .value_name("SIZE")
+                                .help("Max width")
+                                .use_delimiter(false)
                                 .takes_value(true))
                             .get_matches();
 
@@ -119,6 +154,11 @@ fn main () {
     let stroke = matches.value_of("stroke").unwrap();
     let scale = matches.value_of("scale").unwrap().parse::<usize>().unwrap();
     let pad = matches.value_of("pad").unwrap().parse::<f64>().unwrap();
+    let _width = matches.value_of("width");
+    let _max_width = matches.value_of("max_width");
+    let _height = matches.value_of("height");
+    let _max_height = matches.value_of("max_height");
+
     let level = Level::load(input_file.to_str().unwrap()).unwrap();
 
     // Figure out max and min coordinates.
@@ -149,9 +189,10 @@ fn main () {
     let mut buffer = vec![];
     let width = ((max_x + min_x.abs()) * scale as f64) + pad * 2_f64;
     let height = ((max_y + min_y.abs()) * scale as f64) + pad * 2_f64;
-    buffer.extend_from_slice(format!("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{}\" height=\"{}\">\n",
+    buffer.extend_from_slice(br#"<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">"#);
+    buffer.extend_from_slice(format!("\r\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{}\" height=\"{}\">\r\n",
                                     width, height).as_bytes());
-    buffer.extend_from_slice(format!("\t<rect width=\"100%\" height=\"100%\" style=\"fill: {};\" />\n", ground_color).as_bytes());
+    buffer.extend_from_slice(format!("\t<rect width=\"100%\" height=\"100%\" style=\"fill: {};\" />\r\n", ground_color).as_bytes());
 
     // Polygons.
     buffer.extend_from_slice(format!("\t<path fill-rule=\"evenodd\" fill=\"{}\" d=\"", sky_color).as_bytes());
@@ -166,7 +207,7 @@ fn main () {
             }
         }
     }
-    buffer.extend_from_slice(b"Z\" />\n");
+    buffer.extend_from_slice(b"Z\" />\r\n");
 
     // Objects
     for object in &level.objects {
@@ -178,13 +219,14 @@ fn main () {
             ObjectType::Killer => killer_color,
             ObjectType::Player => player_color
         };
-        buffer.extend_from_slice(format!("<circle cx=\"{}\" cy=\"{}\" r=\"{}\" stroke=\"{}\" stroke-width=\"{}\" fill=\"{}\" />\n",
+        buffer.extend_from_slice(format!("<circle cx=\"{}\" cy=\"{}\" r=\"{}\" stroke=\"{}\" stroke-width=\"{}\" fill=\"{}\" />\r\n",
                                         x, y, OBJECT_RADIUS * scale as f64, "black", stroke, color).as_bytes());
     }
 
     buffer.extend_from_slice(b"</svg>");
 
     // Write buffer to file.
-    let mut file = File::create(output_file).unwrap();
+    let mut file = File::create(&output_file).unwrap();
     file.write_all(&buffer).unwrap();
+    println!("Wrote SVG file: {:?}", output_file);
 }
