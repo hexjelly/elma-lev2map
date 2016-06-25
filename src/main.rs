@@ -11,6 +11,23 @@ use std::path::{Path, PathBuf};
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 
+#[derive(Debug)]
+struct Settings<'a> {
+    ground: &'a str,
+    sky: &'a str,
+    apple: &'a str,
+    flower: &'a str,
+    killer: &'a str,
+    player: &'a str,
+    stroke: usize,
+    scale: usize,
+    pad: usize,
+    width: usize,
+    height: usize,
+    max_width: usize,
+    max_height: usize
+}
+
 fn main () {
     // Take care of command line arguments.
     let matches = App::new("elma-lev2map")
@@ -18,13 +35,10 @@ fn main () {
                             .author("Roger Andersen <hexjelly@hexjelly.com>")
                             .about("Converts Elasto Mania level files to images")
                             .arg(Arg::with_name("input")
-                                .short("i")
-                                .long("input")
+                                .short("i").long("input")
                                 .value_name("PATH")
                                 .help("Path to level file")
-                                .takes_value(true)
-                                .use_delimiter(false)
-                                .required(true))
+                                .takes_value(true).use_delimiter(false).required(true))
                             .arg(Arg::with_name("output")
                                 .short("o")
                                 .long("output")
@@ -108,12 +122,14 @@ fn main () {
                                 .long("height")
                                 .value_name("SIZE")
                                 .help("Height")
+                                .conflicts_with("max_height")
                                 .use_delimiter(false)
                                 .takes_value(true))
                             .arg(Arg::with_name("width")
                                 .long("width")
                                 .value_name("SIZE")
                                 .help("Width")
+                                .conflicts_with("max_width")
                                 .use_delimiter(false)
                                 .takes_value(true))
                             .arg(Arg::with_name("max_height")
@@ -145,21 +161,54 @@ fn main () {
         output_file.set_extension("svg");
     }
 
-    let ground_color = matches.value_of("ground").unwrap();
-    let sky_color = matches.value_of("sky").unwrap();
-    let apple_color = matches.value_of("apple").unwrap();
-    let flower_color = matches.value_of("flower").unwrap();
-    let killer_color = matches.value_of("killer").unwrap();
-    let player_color = matches.value_of("player").unwrap();
-    let stroke = matches.value_of("stroke").unwrap();
+    let ground = matches.value_of("ground").unwrap();
+    let sky = matches.value_of("sky").unwrap();
+    let apple = matches.value_of("apple").unwrap();
+    let flower = matches.value_of("flower").unwrap();
+    let killer = matches.value_of("killer").unwrap();
+    let player = matches.value_of("player").unwrap();
+    let stroke = matches.value_of("stroke").unwrap().parse::<usize>().unwrap();
     let scale = matches.value_of("scale").unwrap().parse::<usize>().unwrap();
-    let pad = matches.value_of("pad").unwrap().parse::<f64>().unwrap();
-    let _width = matches.value_of("width");
-    let _max_width = matches.value_of("max_width");
-    let _height = matches.value_of("height");
-    let _max_height = matches.value_of("max_height");
+    let pad = matches.value_of("pad").unwrap().parse::<usize>().unwrap();
+    let mut width = 0;
+    if let Some(val) = matches.value_of("width") {
+        width = val.parse::<usize>().unwrap();
+    };
+    let mut max_width = 0;
+    if let Some(val) = matches.value_of("max_width") {
+        max_width = val.parse::<usize>().unwrap();
+    };
+    let mut height = 0;
+    if let Some(val) = matches.value_of("height") {
+        height = val.parse::<usize>().unwrap();
+    };
+    let mut max_height = 0;
+    if let Some(val) = matches.value_of("max_height") {
+        max_height = val.parse::<usize>().unwrap();
+    };
 
-    let level = Level::load(input_file.to_str().unwrap()).unwrap();
+    let settings = Settings {
+        ground: ground,
+        sky: sky,
+        apple: apple,
+        flower: flower,
+        killer: killer,
+        player: player,
+        stroke: stroke,
+        scale: scale,
+        pad: pad,
+        width: width,
+        height: height,
+        max_width: max_width,
+        max_height: max_height
+    };
+
+    make_svg(input_file, settings, &output_file);
+}
+
+fn make_svg (input: &Path, settings: Settings, output: &PathBuf) {
+
+    let level = Level::load(input.to_str().unwrap()).unwrap();
 
     // Figure out max and min coordinates.
     let mut max_x = 0_f64;
@@ -187,22 +236,25 @@ fn main () {
 
     // Start writing SVG data to buffer.
     let mut buffer = vec![];
-    let width = ((max_x + min_x.abs()) * scale as f64) + pad * 2_f64;
-    let height = ((max_y + min_y.abs()) * scale as f64) + pad * 2_f64;
+    let width = ((max_x + min_x.abs()) * settings.scale as f64) + settings.pad as f64 * 2_f64;
+    let height = ((max_y + min_y.abs()) * settings.scale as f64) + settings.pad as f64 * 2_f64;
+
     buffer.extend_from_slice(br#"<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">"#);
     buffer.extend_from_slice(format!("\r\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{}\" height=\"{}\">\r\n",
-                                    width, height).as_bytes());
-    buffer.extend_from_slice(format!("\t<rect width=\"100%\" height=\"100%\" style=\"fill: {};\" />\r\n", ground_color).as_bytes());
+                             width, height).as_bytes());
+    buffer.extend_from_slice(format!("\t<rect width=\"100%\" height=\"100%\" style=\"fill: {};\" />\r\n",
+                             settings.ground).as_bytes());
 
     // Polygons.
-    buffer.extend_from_slice(format!("\t<path fill-rule=\"evenodd\" fill=\"{}\" d=\"", sky_color).as_bytes());
+    buffer.extend_from_slice(format!("\t<path fill-rule=\"evenodd\" fill=\"{}\" d=\"",
+                             settings.sky).as_bytes());
     for polygon in &level.polygons {
         if !polygon.grass {
             for (n, vertex) in polygon.vertices.iter().enumerate() {
                 if n == 0 { buffer.extend_from_slice(b"M"); }
                 else { buffer.extend_from_slice(b"L"); }
-                let x = ((vertex.x + min_x.abs()) * scale as f64) + pad;
-                let y = ((vertex.y + min_y.abs()) * scale as f64) + pad;
+                let x = ((vertex.x + min_x.abs()) * settings.scale as f64) + settings.pad as f64;
+                let y = ((vertex.y + min_y.abs()) * settings.scale as f64) + settings.pad as f64;
                 buffer.extend_from_slice(format!("{} {} ", x, y).as_bytes());
             }
         }
@@ -211,22 +263,22 @@ fn main () {
 
     // Objects
     for object in &level.objects {
-        let x = ((object.position.x + min_x.abs()) * scale as f64) + pad;
-        let y = ((object.position.y + min_y.abs()) * scale as f64) + pad;
+        let x = ((object.position.x + min_x.abs()) * settings.scale as f64) + settings.pad as f64;
+        let y = ((object.position.y + min_y.abs()) * settings.scale as f64) + settings.pad as f64;
         let color = match object.object_type {
-            ObjectType::Apple { .. } => apple_color,
-            ObjectType::Exit => flower_color,
-            ObjectType::Killer => killer_color,
-            ObjectType::Player => player_color
+            ObjectType::Apple { .. } => settings.apple,
+            ObjectType::Exit => settings.flower,
+            ObjectType::Killer => settings.killer,
+            ObjectType::Player => settings.player
         };
         buffer.extend_from_slice(format!("<circle cx=\"{}\" cy=\"{}\" r=\"{}\" stroke=\"{}\" stroke-width=\"{}\" fill=\"{}\" />\r\n",
-                                        x, y, OBJECT_RADIUS * scale as f64, "black", stroke, color).as_bytes());
+                                 x, y, OBJECT_RADIUS * settings.scale as f64, "black", settings.stroke, color).as_bytes());
     }
 
     buffer.extend_from_slice(b"</svg>");
 
     // Write buffer to file.
-    let mut file = File::create(&output_file).unwrap();
+    let mut file = File::create(&output).unwrap();
     file.write_all(&buffer).unwrap();
-    println!("Wrote SVG file: {:?}", output_file);
+    println!("Wrote SVG file: {:?}", output);
 }
