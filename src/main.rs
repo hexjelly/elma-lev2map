@@ -349,7 +349,22 @@ fn make_svg (input: &Path, settings: Settings, output: &PathBuf) {
     }
     buffer.extend_from_slice(b"Z\" />\r\n");
 
-    // Objects
+    // Grass polygons.
+    buffer.extend_from_slice(b"\t<path fill=\"none\" stroke=\"green\" stroke-width=\"0.7\" d=\"");
+    for polygon in &level.polygons {
+        if polygon.grass {
+            for (n, vertex) in polygon.vertices.iter().enumerate() {
+                if n == 0 { buffer.extend_from_slice(b"M"); }
+                else { buffer.extend_from_slice(b"L"); }
+                let x = ((vertex.x + min_x.abs()) * settings.scale as f64) + settings.pad as f64;
+                let y = ((vertex.y + min_y.abs()) * settings.scale as f64) + settings.pad as f64;
+                buffer.extend_from_slice(format!("{} {} ", x, y).as_bytes());
+            }
+        }
+    }
+    buffer.extend_from_slice(b"Z\" />\r\n");
+
+    // Objects.
     for object in &level.objects {
         let x = ((object.position.x + min_x.abs()) * settings.scale as f64) + settings.pad as f64;
         let y = ((object.position.y + min_y.abs()) * settings.scale as f64) + settings.pad as f64;
