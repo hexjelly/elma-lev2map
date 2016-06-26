@@ -25,7 +25,8 @@ struct Settings<'a> {
     width: usize,
     height: usize,
     max_width: usize,
-    max_height: usize
+    max_height: usize,
+    complexity: &'a str
 }
 
 fn main () {
@@ -136,6 +137,13 @@ fn main () {
                                 .value_name("SIZE")
                                 .help("Max width")
                                 .use_delimiter(false).takes_value(true))
+                            .arg(Arg::with_name("complexity")
+                                .long("complexity")
+                                .value_name("CHOICE")
+                                .help("What complexity to use for objects")
+                                .use_delimiter(false).takes_value(true)
+                                .default_value("complex")
+                                .possible_values(&["simple", "complex", "mix"]))
                             .get_matches();
 
     let input_file = Path::new(matches.value_of("input").unwrap());
@@ -178,6 +186,7 @@ fn main () {
     if let Some(val) = matches.value_of("max_height") {
         max_height = val.parse::<usize>().unwrap();
     };
+    let complexity = matches.value_of("complexity").unwrap();
 
     let settings = Settings {
         ground: ground,
@@ -192,7 +201,8 @@ fn main () {
         width: width,
         height: height,
         max_width: max_width,
-        max_height: max_height
+        max_height: max_height,
+        complexity: complexity
     };
 
     make_svg(input_file, settings, &output_file);
@@ -250,24 +260,21 @@ fn make_svg (input: &Path, settings: Settings, output: &PathBuf) {
     buffer.extend_from_slice(br##"
         <g id="killer">
         <style type="text/css">
-        	.st0 { fill: #000000; }
-        	.st1 { fill: #941A1D; }
-        	.st2 { fill: #D91B21; }
+        	.st0{fill:#231F20;}
+        	.st1{fill:#941A1D;}
+        	.st2{fill:#D91B21;}
         </style>
-        	<polygon class="st0" points="20.1,6.6 23.5,7.9 28.8,2.8 24.5,3.7" />
-        	<polygon class="st0" points="28.3,13 33.9,17.1 34.8,18.7 31.6,17.1 28.8,17.1" />
-        	<polygon class="st0" points="26.7,24 26.6,28.9 26.6,32.6 25.6,28.6 24.1,26.3" />
-        	<polygon class="st0" points="15.1,27.5 11.6,29.5 8.2,29.9 11.1,28.6 13.1,26.6" />
-        	<polygon class="st0" points="7.4,19.5 7.4,16.8 3.9,16.8 0,15.3 3.4,18.3" />
-        	<polygon class="st0" points="9.6,10.4 9.2,5.6 11.7,1.3 11.7,5.3 13.1,7.9" />
-
-        	<circle class="st1" cx="18.1" cy="17.1" r="11" />
-
-        	<polygon class="st0" points="26.1,13.8 31.8,22.9 32.1,26.4 30,23.2 26.6,21.2 23.8,24.1 20.8,31.8 18.1,35.2 19.4,31.6 19.1,25.5
-        		7.3,25.6 2.9,24.5 8.3,23.8 10.5,21.7 7.6,15.1 4.6,11.4 3.6,7.3 7.1,10.9 9.5,12.1 10.9,12.1 13.1,8.8 15.4,3.9 19.5,0 18.9,2.8
-        		18.1,7.1 18.1,8.6 29.8,8.7 35.1,9.8 26.6,11.6" />
-
-        	<circle class="st2" cx="18.1" cy="17.1" r="5" />
+        <polygon id="polygon3339" class="st0" points="12.7,1.2 10.8,1.6 8.9,2.9 10.4,3.5 "/>
+        <polygon id="polygon3341" class="st0" points="15.3,8.2 13.9,7.5 12.7,7.5 12.5,5.7 14.9,7.5 "/>
+        <polygon id="polygon3343" class="st0" points="11.7,14.4 11.3,12.6 10.6,11.6 11.8,10.6 11.7,12.7 "/>
+        <polygon id="polygon3345" class="st0" points="3.6,13.2 4.9,12.6 5.8,11.7 6.7,12.1 5.1,13 "/>
+        <polygon id="polygon3347" class="st0" points="1.7,7.4 0,6.7 1.5,8.1 3.3,8.6 3.3,7.4 "/>
+        <polygon id="polygon3349" class="st0" points="5.2,0.6 5.2,2.3 5.8,3.5 4.2,4.6 4.1,2.5 "/>
+        <circle id="circle3351" class="st1" cx="8" cy="7.5" r="4.9"/>
+        <polygon id="polygon3353" class="st0" points="14.2,11.6 13.2,10.2 11.7,9.3 10.5,10.6 9.2,14 8,15.5 8.6,13.9 8.4,11.2 3.2,11.3
+        	1.3,10.8 3.7,10.5 4.6,9.6 3.4,6.7 2,5 1.6,3.2 3.1,4.8 4.2,5.3 4.8,5.3 5.8,3.9 6.8,1.7 8.6,0 8.3,1.2 8,3.1 8,3.8 13.1,3.8
+        	15.5,4.3 11.7,5.1 11.5,6.1 14,10.1 "/>
+        <circle id="circle3355" class="st2" cx="8" cy="7.5" r="2.2"/>
         </g>"##);
 
     // Apple definition.
@@ -279,18 +286,52 @@ fn make_svg (input: &Path, settings: Settings, output: &PathBuf) {
         	.stem{fill:#3F1D00;}
         </style>
 
-        	<path class="main" d="M38.4,16.6c0.1-1.4-0.2-3.8-0.8-5.5c-0.6-1.4-2.8-3.8-4.1-4.6c-1.3-0.9-4.3-1.8-5.8-2.1
-        		c-2.1-0.4-5.6-0.9-7.7-1c-1.8-0.1-6.2,0-7.9,0.2c-1.6,0.2-4.9,0.8-6.3,1.7C4.7,5.9,2.8,7.7,2.2,8.7c-0.7,1.1-1.8,3.5-2,4.8
-        		c-0.4,2.8-0.2,4.3,0,5.7c0.2,1.7,0.5,4.4,1.4,6.7c1,2.8,2.4,4.8,3.6,6.1c1.3,1.4,4.3,3.7,6,4.5c1.8,0.8,5.7,1.8,7.7,1.8
-        		c2.2,0,6.8-0.7,8.8-1.7c1.5-0.8,4.1-3.1,5.2-4.3C36.9,27.8,38.2,20.8,38.4,16.6z"/>
+        <path class="main" d="M15.4,6.6c0-0.5-0.1-1.5-0.3-2.2c-0.2-0.6-1.1-1.5-1.7-1.9c-0.5-0.3-1.7-0.7-2.3-0.8C10.2,1.6,8.8,1.4,8,1.4
+            c-0.7,0-2.5,0-3.2,0.1c-0.6,0.1-2,0.3-2.5,0.7c-0.4,0.3-1.2,1-1.4,1.4C0.6,3.9,0.2,4.9,0.1,5.4c-0.2,1.1-0.1,1.7,0,2.3
+            c0.1,0.7,0.2,1.8,0.6,2.7c0.4,1.1,1,1.9,1.5,2.5c0.5,0.5,1.7,1.5,2.4,1.8c0.7,0.3,2.3,0.7,3.1,0.7c0.9,0,2.7-0.3,3.5-0.7
+            c0.6-0.3,1.6-1.2,2.1-1.7C14.8,11.1,15.3,8.3,15.4,6.6z"/>
 
-        	<path class="leaf" d="M30.6,1.8c-0.4-0.3-2-1.3-3.8-0.8c-0.2,0.1-0.7,0.2-1.3,0.5c-0.9,0.6-1,1.3-2,2.8c-0.6,0.9-0.9,1.4-1.4,1.8
-        		c-1,0.8-2.6,1.3-3.2,0.8c-0.7-0.7,0.2-2.8,1.1-4c0.5-0.6,1.4-1.7,2.9-2.4C26.7-1.1,30.4,1.6,30.6,1.8z"/>
+        <path class="leaf" d="M12.3,0.7c-0.2-0.1-0.8-0.5-1.5-0.3c-0.1,0-0.3,0.1-0.5,0.2C9.9,0.9,9.8,1.1,9.5,1.7C9.2,2.1,9.1,2.3,8.9,2.5
+            C8.5,2.8,7.8,3,7.6,2.8C7.3,2.5,7.7,1.6,8,1.1c0.2-0.3,0.6-0.7,1.2-1C10.7-0.4,12.2,0.6,12.3,0.7z"/>
 
-        	<path class="stem" d="M18.4,7c-0.7-0.7-2.1-3.4-2.1-3.4c-0.1-0.2-0.1-0.5,0.1-0.6l0.5-0.3C17.3,2.5,17.8,2.6,18,3
-        		c0,0,1.5,2.6,1.5,3.5c0,0-0.3,0.3-0.4,0.4C19,7,18.4,7,18.4,7z"/>
+        <path class="stem" d="M7.4,2.8C7.1,2.5,6.5,1.4,6.5,1.4c0-0.1,0-0.2,0.1-0.2l0.2-0.1c0.2-0.1,0.4,0,0.4,0.1c0,0,0.6,1,0.6,1.4
+            c0,0-0.1,0.1-0.2,0.2C7.6,2.8,7.4,2.8,7.4,2.8z"/>
         </g>"##);
 
+    // Flower definition
+    buffer.extend_from_slice(br##"
+    <g id="flower">
+    <style type="text/css">
+    	.st0{fill:url(#XMLID_8_);}
+    	.st1{fill:url(#XMLID_9_);}
+    	.st2{display:none;}
+    </style>
+	<linearGradient id="XMLID_8_" gradientUnits="userSpaceOnUse" x1="26.3959" y1="21.563" x2="3.0219" y2="8.068">
+		<stop  offset="0" style="stop-color:#FFFFFF"/>
+		<stop  offset="1" style="stop-color:#E7E7E7"/>
+	</linearGradient>
+	<path id="XMLID_5_" class="st0" d="M17.2,6.9l0.9,0.4c0,0,0.7-1.9,1.1-2.4c0.3-0.4,1.2-1.2,1.7-1.3C21.5,3.4,22.6,3.7,23,4
+		c0.4,0.3,0.8,1.5,0.8,2c0,0.7-1,1.9-1.4,2.4c-0.4,0.5-1.8,1.6-1.8,1.6l0.6,0.6c0,0,1.3-0.8,1.8-0.9c0.7-0.3,2.3-0.5,3.1-0.3
+		c0.5,0.2,1.3,1.1,1.6,1.6c0.3,0.5,0.5,1.9,0.5,2.5c-0.1,0.7-0.9,1.8-1.5,2.2c-0.6,0.3-1.9,0-2.6,0.2c-0.1,0-0.4,0.2-0.4,0.2
+		s1.6,1.2,2.1,1.7c0.4,0.4,0.9,1.5,1,2c0.1,0.4-0.2,1.2-0.4,1.6c-0.2,0.4-0.9,0.8-1.3,1c-0.5,0.2-1.5,0-1.9-0.2
+		c-0.5-0.2-1.4-1.4-1.4-1.4L20.9,21c0,0,0.7,1.6,0.9,2.1c0.2,0.7,0.5,2,0.3,2.8c-0.1,0.5-0.7,1.3-1.1,1.6c-0.5,0.4-1.6,0.6-2.2,0.4
+		c-0.5-0.1-1.4-0.9-1.7-1.4c-0.3-0.5-0.6-2.4-0.6-2.4H16c0,0,0.1,2.5-0.2,3.2c-0.2,0.5-1,1.2-1.5,1.3c-0.6,0.2-1.9-0.3-2.3-0.7
+		c-0.5-0.4-0.6-1.7-0.7-2.3c-0.1-0.6,0.3-2.5,0.3-2.5L10.9,23c0,0-0.3,1.2-0.7,1.7c-0.4,0.5-1.4,1.4-2,1.5c-0.5,0.1-1.5-0.3-1.9-0.7
+		c-0.3-0.3-0.6-1-0.7-1.4c-0.1-0.6,0.1-1.7,0.5-2.2c0.4-0.6,2.5-2.1,2.5-2.1s0.1-0.5,0-0.7C8.5,18.9,8,18.7,8,18.7s-1,0.7-1.5,0.9
+		c-0.4,0.2-1.4,0.6-1.8,0.6c-0.5,0-1.6-0.3-2-0.6c-0.4-0.3-0.8-1-1-1.5c-0.2-0.5-0.6-1.6-0.5-2.2c0.1-0.4,0.3-1.5,0.7-1.8
+		C2.2,14,3,13.5,3.6,13.4c0.2,0,1.5-0.1,1.5-0.1l0-0.8c0,0-1-0.6-1.4-0.8c-0.4-0.3-0.9-1.1-1-1.6C2.5,9.4,2.7,8.2,3,7.8
+		c0.3-0.4,1.4-0.9,1.5-0.9c0.1,0,1.4,0,1.8,0.2c0.3,0.1,1.2,0.7,1.2,0.7l0.3-0.5c0,0-0.7-1.2-0.9-1.6C6.8,5.2,6.7,4.2,6.8,3.8
+		c0.1-0.5,0.6-1.2,1-1.5c0.4-0.3,1.9-0.7,2.4-0.6c0.5,0.1,1.3,0.9,1.6,1.4c0.3,0.6,0.8,2.6,0.8,2.6l0.7,0c0,0-0.2-1.9-0.1-2.6
+		c0.1-0.5,0.7-1.4,1.2-1.6c0.5-0.2,1.8-0.1,2.2,0.2c0.4,0.3,0.6,0.9,0.7,1.3C17.7,3.9,17.2,6.9,17.2,6.9z"/>
+	<g id="Layer_3">
+	</g>
+	<linearGradient id="XMLID_9_" gradientUnits="userSpaceOnUse" x1="18.8892" y1="17.4599" x2="10.597" y2="12.6724">
+		<stop  offset="0" style="stop-color:#E9C300"/>
+		<stop  offset="1" style="stop-color:#FFF900"/>
+	</linearGradient>
+	<ellipse id="XMLID_1_" class="st1" cx="14.7" cy="15" rx="4.5" ry="5.7"/>
+    </g>
+    "##);
 
     buffer.extend_from_slice(format!("</defs>\r\n\t<rect width=\"100%\" height=\"100%\" style=\"fill: {};\" />\r\n",
                              settings.ground).as_bytes());
@@ -315,23 +356,27 @@ fn make_svg (input: &Path, settings: Settings, output: &PathBuf) {
     for object in &level.objects {
         let x = ((object.position.x + min_x.abs()) * settings.scale as f64) + settings.pad as f64;
         let y = ((object.position.y + min_y.abs()) * settings.scale as f64) + settings.pad as f64;
-        
+
+        // Simple circles.
+        if settings.complexity == "mix" || settings.complexity == "simple" {
+            let color = match object.object_type {
+                ObjectType::Apple { .. } => settings.apple,
+                ObjectType::Exit => settings.flower,
+                ObjectType::Killer => settings.killer,
+                ObjectType::Player => settings.player
+            };
+
+            buffer.extend_from_slice(format!("<circle cx=\"{}\" cy=\"{}\" r=\"{}\" stroke=\"{}\" stroke-width=\"{}\" fill=\"{}\" />\r\n",
+                                     x, y, OBJECT_RADIUS * settings.scale as f64, "black", settings.stroke, color).as_bytes());
+        }
+
+        // SVG objects
         match object.object_type {
             ObjectType::Apple { .. } => buffer.extend_from_slice(format!("<use x=\"{}\" y=\"{}\" xlink:href=\"#apple\" />\r\n", x - OBJECT_RADIUS * settings.scale as f64, y - OBJECT_RADIUS * settings.scale as f64).as_bytes()),
             ObjectType::Killer => buffer.extend_from_slice(format!("<use x=\"{}\" y=\"{}\" xlink:href=\"#killer\" />\r\n", x - OBJECT_RADIUS * settings.scale as f64, y - OBJECT_RADIUS * settings.scale as f64).as_bytes()),
+            ObjectType::Exit => buffer.extend_from_slice(format!("<use x=\"{}\" y=\"{}\" xlink:href=\"#flower\" />\r\n", x - OBJECT_RADIUS * settings.scale as f64, y - OBJECT_RADIUS * settings.scale as f64).as_bytes()),
             _ => {}
         };
-
-        // TODO: maybe make a setting to just use simple shapes?
-        let color = match object.object_type {
-            ObjectType::Apple { .. } => settings.apple,
-            ObjectType::Exit => settings.flower,
-            ObjectType::Killer => settings.killer,
-            ObjectType::Player => settings.player
-        };
-
-        buffer.extend_from_slice(format!("<circle cx=\"{}\" cy=\"{}\" r=\"{}\" stroke=\"{}\" stroke-width=\"{}\" fill=\"{}\" />\r\n",
-                                 x, y, OBJECT_RADIUS * settings.scale as f64, "black", settings.stroke, color).as_bytes());
     }
 
     buffer.extend_from_slice(b"</svg>");
