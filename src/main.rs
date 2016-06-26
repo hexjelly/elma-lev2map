@@ -226,15 +226,15 @@ fn make_svg (input: &Path, settings: Settings, output: &PathBuf) {
     // In addition to that, keep track of what type of objects the level has, in order to add the necessary ones
     // to the <defs> tag, and skip the ones not in the level to make the file size smaller, if only by a tiny fraction.
     for object in &level.objects {
-        if object.position.x < min_x { min_x = object.position.x - OBJECT_RADIUS; }
+        if object.position.x - OBJECT_RADIUS < min_x { min_x = object.position.x - OBJECT_RADIUS; }
         if object.position.x > max_x { max_x = object.position.x + OBJECT_RADIUS; }
-        if object.position.y < min_y { min_y = object.position.y - OBJECT_RADIUS; }
+        if object.position.y - OBJECT_RADIUS < min_y { min_y = object.position.y - OBJECT_RADIUS; }
         if object.position.y > max_y { max_y = object.position.y + OBJECT_RADIUS; }
 
         match object.object_type {
             ObjectType::Apple { .. } => _apple = true,
             ObjectType::Killer => _killer = true,
-            _ => break
+            _ => {}
         };
     }
 
@@ -244,13 +244,13 @@ fn make_svg (input: &Path, settings: Settings, output: &PathBuf) {
     let height = ((max_y + min_y.abs()) * settings.scale as f64) + settings.pad as f64 * 2_f64;
 
     buffer.extend_from_slice(br#"<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">"#);
-    buffer.extend_from_slice(format!("\r\n<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"{}\" height=\"{}\">\r\n<defs>",
+    buffer.extend_from_slice(format!("\r\n<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 {} {}\">\r\n<defs>",
                              width, height).as_bytes());
     // Killer definition.
     buffer.extend_from_slice(br##"
         <g id="killer">
         <style type="text/css">
-        	.st0 { fill: #231F20; }
+        	.st0 { fill: #000000; }
         	.st1 { fill: #941A1D; }
         	.st2 { fill: #D91B21; }
         </style>
@@ -274,20 +274,20 @@ fn make_svg (input: &Path, settings: Settings, output: &PathBuf) {
     buffer.extend_from_slice(br##"
         <g id="apple">
         <style type="text/css">
-        	.st1{fill:#CF0000;}
-        	.st2{fill:#00AA00;}
-        	.st3{fill:#3F1D00;}
+        	.main{fill:#CF0000;}
+        	.leaf{fill:#00AA00;}
+        	.stem{fill:#3F1D00;}
         </style>
 
-        	<path class="st1" d="M38.4,16.6c0.1-1.4-0.2-3.8-0.8-5.5c-0.6-1.4-2.8-3.8-4.1-4.6c-1.3-0.9-4.3-1.8-5.8-2.1
+        	<path class="main" d="M38.4,16.6c0.1-1.4-0.2-3.8-0.8-5.5c-0.6-1.4-2.8-3.8-4.1-4.6c-1.3-0.9-4.3-1.8-5.8-2.1
         		c-2.1-0.4-5.6-0.9-7.7-1c-1.8-0.1-6.2,0-7.9,0.2c-1.6,0.2-4.9,0.8-6.3,1.7C4.7,5.9,2.8,7.7,2.2,8.7c-0.7,1.1-1.8,3.5-2,4.8
         		c-0.4,2.8-0.2,4.3,0,5.7c0.2,1.7,0.5,4.4,1.4,6.7c1,2.8,2.4,4.8,3.6,6.1c1.3,1.4,4.3,3.7,6,4.5c1.8,0.8,5.7,1.8,7.7,1.8
         		c2.2,0,6.8-0.7,8.8-1.7c1.5-0.8,4.1-3.1,5.2-4.3C36.9,27.8,38.2,20.8,38.4,16.6z"/>
 
-        	<path class="st2" d="M30.6,1.8c-0.4-0.3-2-1.3-3.8-0.8c-0.2,0.1-0.7,0.2-1.3,0.5c-0.9,0.6-1,1.3-2,2.8c-0.6,0.9-0.9,1.4-1.4,1.8
+        	<path class="leaf" d="M30.6,1.8c-0.4-0.3-2-1.3-3.8-0.8c-0.2,0.1-0.7,0.2-1.3,0.5c-0.9,0.6-1,1.3-2,2.8c-0.6,0.9-0.9,1.4-1.4,1.8
         		c-1,0.8-2.6,1.3-3.2,0.8c-0.7-0.7,0.2-2.8,1.1-4c0.5-0.6,1.4-1.7,2.9-2.4C26.7-1.1,30.4,1.6,30.6,1.8z"/>
 
-        	<path class="st3" d="M18.4,7c-0.7-0.7-2.1-3.4-2.1-3.4c-0.1-0.2-0.1-0.5,0.1-0.6l0.5-0.3C17.3,2.5,17.8,2.6,18,3
+        	<path class="stem" d="M18.4,7c-0.7-0.7-2.1-3.4-2.1-3.4c-0.1-0.2-0.1-0.5,0.1-0.6l0.5-0.3C17.3,2.5,17.8,2.6,18,3
         		c0,0,1.5,2.6,1.5,3.5c0,0-0.3,0.3-0.4,0.4C19,7,18.4,7,18.4,7z"/>
         </g>"##);
 
@@ -315,7 +315,7 @@ fn make_svg (input: &Path, settings: Settings, output: &PathBuf) {
     for object in &level.objects {
         let x = ((object.position.x + min_x.abs()) * settings.scale as f64) + settings.pad as f64;
         let y = ((object.position.y + min_y.abs()) * settings.scale as f64) + settings.pad as f64;
-
+        
         match object.object_type {
             ObjectType::Apple { .. } => buffer.extend_from_slice(format!("<use x=\"{}\" y=\"{}\" xlink:href=\"#apple\" />\r\n", x - OBJECT_RADIUS * settings.scale as f64, y - OBJECT_RADIUS * settings.scale as f64).as_bytes()),
             ObjectType::Killer => buffer.extend_from_slice(format!("<use x=\"{}\" y=\"{}\" xlink:href=\"#killer\" />\r\n", x - OBJECT_RADIUS * settings.scale as f64, y - OBJECT_RADIUS * settings.scale as f64).as_bytes()),
