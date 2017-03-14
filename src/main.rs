@@ -259,7 +259,7 @@ fn make_svg (input: &Path, settings: Settings, output: &PathBuf) {
 
     // ground texture
     buffer.extend_from_slice(br##"
-        <pattern id="img1" patternUnits="userSpaceOnUse" x="0" y="0" width="100" height="100" viewBox="0 0 40 31">
+        <pattern id="img1" patternUnits="userSpaceOnUse" x="0" y="0" width="20" height="15.5" viewBox="0 0 40 31">
         <style type="text/css">
         	#shapes{fill:#191341;stroke:#000000;stroke-miterlimit:10;}
         	#highlights{fill:#210CF5;}
