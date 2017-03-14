@@ -265,7 +265,7 @@ fn make_svg (input: &Path, settings: Settings, output: &PathBuf) {
     buffer.extend_from_slice(include_bytes!("assets/apple.def"));
     buffer.extend_from_slice(include_bytes!("assets/flower.def"));
 
-    buffer.extend_from_slice(b"</defs>\r\n\t<rect width=\"100%\" height=\"100%\" fill=\"url(#img1)\" />\r\n");
+    buffer.extend_from_slice(b"</defs>\r\n\t<rect width=\"100%\" height=\"100%\" fill=\"url(#ground)\" />\r\n");
 
     // Polygons.
     buffer.extend_from_slice(format!("\t<path fill-rule=\"evenodd\" fill=\"{}\" d=\"",
