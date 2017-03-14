@@ -261,34 +261,28 @@ fn make_svg (input: &Path, settings: Settings, output: &PathBuf) {
     buffer.extend_from_slice(br##"
         <pattern id="img1" patternUnits="userSpaceOnUse" x="0" y="0" width="100" height="100" viewBox="0 0 40 31">
         <style type="text/css">
-        	.ground{fill:#191341;stroke:#000000;stroke-miterlimit:10;}
-        	.highlight{fill:#210CF5;}
+        	#shapes{fill:#191341;stroke:#000000;stroke-miterlimit:10;}
+        	#highlights{fill:#210CF5;}
         </style>
         <g id="shapes">
-        	<polyline id="XMLID_68_" class="ground" points="17.8,32.9 24.5,27 28,27 28.4,33.4 	"/>
-        	<polygon id="XMLID_69_" class="ground" points="25.3,19.9 21.3,11.2 19.3,12.9 17.7,11.8 14.9,17.2 16.2,23.5 20.1,24 	"/>
-        	<polyline id="XMLID_70_" class="ground" points="8.3,31.9 8,22.9 10.1,20 14.9,17.2 16.2,23.5 20.1,24 25.3,19.9 28.6,23.4 28,25.8
-        		28,27 24.3,27 18.7,32.1 	"/>
-        	<polyline id="XMLID_67_" class="ground" points="19.4,-2.8 13,3.9 5.8,-1 	"/>
-        	<polyline id="XMLID_72_" class="ground" points="-4.4,18.1 10.1,20 8,22.9 8.3,31.3 8.4,33.3 -3.5,32.9 	"/>
-        	<polyline id="XMLID_63_" class="ground" points="-2.4,18.1 10.1,20 14.9,17.2 17.7,11.8 14.5,9.5 13,3.9 5.8,-1 -2.8,-1 	"/>
-        	<polyline id="XMLID_62_" class="ground" points="41.8,25 32.2,22.4 28.6,23.4 25.3,19.9 21.3,11.2 26.8,6.6 34.4,6.9 41.5,2.9 	"/>
-        	<polygon id="XMLID_59_" class="ground" points="41.5,2.9 34.4,6.9 26.8,6.8 28.4,-1 41.3,-1 	"/>
-        	<polygon id="XMLID_56_" class="ground" points="42.9,25.3 32.2,22.4 28.6,23.4 28,25.8 28.4,33.4 41.3,32.7 	"/>
-        	<path id="XMLID_60_" class="ground" d="M41.8,9.8l-4.5,0.3c-0.7,0-1.3,0.4-1.7,0.8l-1.4,1.6c-0.6,0.7-0.7,1.8,0,2.5l0.9,1.1
-        		c0.4,0.5,1,0.8,1.7,1l5.1,0.9V9.8z"/>
-        	<polyline id="XMLID_57_" class="ground" points="28.4,-1 26.8,6.6 19.3,12.9 14.5,9.5 13,4 17.8,-1 28.3,-1 	"/>
-        	<polyline id="XMLID_66_" class="ground" points="-1.8,10 4.3,10 5.8,7.5 3.7,5.2 -2.3,4.7 	"/>
+        	<polyline points="17.8,32.9 24.5,27 28,27 28.4,33.4"/>
+        	<polygon points="25.3,19.9 21.3,11.2 19.3,12.9 17.7,11.8 14.9,17.2 16.2,23.5 20.1,24"/>
+        	<polyline points="8.3,31.9 8,22.9 10.1,20 14.9,17.2 16.2,23.5 20.1,24 25.3,19.9 28.6,23.4 28,25.8 28,27 24.3,27 18.7,32.1"/>
+        	<polyline points="19.4,-2.8 13,3.9 5.8,-1"/>
+        	<polyline points="-4.4,18.1 10.1,20 8,22.9 8.3,31.3 8.4,33.3 -3.5,32.9"/>
+        	<polyline points="-2.4,18.1 10.1,20 14.9,17.2 17.7,11.8 14.5,9.5 13,3.9 5.8,-1 -2.8,-1"/>
+        	<polyline points="41.8,25 32.2,22.4 28.6,23.4 25.3,19.9 21.3,11.2 26.8,6.6 34.4,6.9 41.5,2.9"/>
+        	<polygon points="41.5,2.9 34.4,6.9 26.8,6.8 28.4,-1 41.3,-1"/>
+        	<polygon points="42.9,25.3 32.2,22.4 28.6,23.4 28,25.8 28.4,33.4 41.3,32.7"/>
+        	<path d="M41.8,9.8l-4.5,0.3c-0.7,0-1.3,0.4-1.7,0.8l-1.4,1.6c-0.6,0.7-0.7,1.8,0,2.5l0.9,1.1 c0.4,0.5,1,0.8,1.7,1l5.1,0.9V9.8z"/>
+        	<polyline points="28.4,-1 26.8,6.6 19.3,12.9 14.5,9.5 13,4 17.8,-1 28.3,-1"/>
+        	<polyline points="-1.8,10 4.3,10 5.8,7.5 3.7,5.2 -2.3,4.7"/>
         </g>
         <g id="highlights">
-        	<path id="XMLID_65_" class="highlight" d="M5.8,2l-2,0C3.6,2,3.5,1.8,3.5,1.6V1.6c0-0.2,0.1-0.3,0.3-0.3h2c0.2,0,0.3,0.1,0.3,0.3v0.1
-        		C6.1,1.8,5.9,2,5.8,2z"/>
-        	<path id="XMLID_61_" class="highlight" d="M3.8,12h-3c-0.1,0-0.2,0.1-0.2,0.2l0,0c0,0.1,0.1,0.5,0.2,0.5h2.9C4,12.6,4,12.2,4,12.1l0,0
-        		C4,12,3.9,12,3.8,12z"/>
-        	<path id="XMLID_64_" class="highlight" d="M14.2,12.4c0,0.2-0.3,0.4-0.6,0.4c-0.3,0-0.6-0.2-0.6-0.4c0-0.2,0.3-0.6,0.6-0.6
-        		C13.9,11.8,14.2,12.2,14.2,12.4z"/>
-        	<path id="XMLID_58_" class="highlight" d="M39.4,12.9h-2c-0.2,0-0.4-0.2-0.4-0.4v-0.1c0-0.2,0.2-0.4,0.4-0.4h2c0.2,0,0.4,0.2,0.4,0.4v0.1
-        		C39.8,12.7,39.6,12.9,39.4,12.9z"/>
+        	<path d="M5.8,2l-2,0C3.6,2,3.5,1.8,3.5,1.6V1.6c0-0.2,0.1-0.3,0.3-0.3h2c0.2,0,0.3,0.1,0.3,0.3v0.1 C6.1,1.8,5.9,2,5.8,2z"/>
+        	<path d="M3.8,12h-3c-0.1,0-0.2,0.1-0.2,0.2l0,0c0,0.1,0.1,0.5,0.2,0.5h2.9C4,12.6,4,12.2,4,12.1l0,0 C4,12,3.9,12,3.8,12z"/>
+        	<path d="M14.2,12.4c0,0.2-0.3,0.4-0.6,0.4c-0.3,0-0.6-0.2-0.6-0.4c0-0.2,0.3-0.6,0.6-0.6 C13.9,11.8,14.2,12.2,14.2,12.4z"/>
+        	<path d="M39.4,12.9h-2c-0.2,0-0.4-0.2-0.4-0.4v-0.1c0-0.2,0.2-0.4,0.4-0.4h2c0.2,0,0.4,0.2,0.4,0.4v0.1 C39.8,12.7,39.6,12.9,39.4,12.9z"/>
         </g>
         </pattern>
         "##);
@@ -297,41 +291,43 @@ fn make_svg (input: &Path, settings: Settings, output: &PathBuf) {
     buffer.extend_from_slice(br##"
         <g id="killer">
         <style type="text/css">
-        	.st0{fill:#231F20;}
-        	.st1{fill:#941A1D;}
-        	.st2{fill:#D91B21;}
+        	#spikes{fill:#110f0f;}
+        	#st1{fill:#941A1D;}
+        	#st2{fill:#D91B21;}
         </style>
-        <polygon id="polygon3339" class="st0" points="12.7,1.2 10.8,1.6 8.9,2.9 10.4,3.5 "/>
-        <polygon id="polygon3341" class="st0" points="15.3,8.2 13.9,7.5 12.7,7.5 12.5,5.7 14.9,7.5 "/>
-        <polygon id="polygon3343" class="st0" points="11.7,14.4 11.3,12.6 10.6,11.6 11.8,10.6 11.7,12.7 "/>
-        <polygon id="polygon3345" class="st0" points="3.6,13.2 4.9,12.6 5.8,11.7 6.7,12.1 5.1,13 "/>
-        <polygon id="polygon3347" class="st0" points="1.7,7.4 0,6.7 1.5,8.1 3.3,8.6 3.3,7.4 "/>
-        <polygon id="polygon3349" class="st0" points="5.2,0.6 5.2,2.3 5.8,3.5 4.2,4.6 4.1,2.5 "/>
-        <circle id="circle3351" class="st1" cx="8" cy="7.5" r="4.9"/>
-        <polygon id="polygon3353" class="st0" points="14.2,11.6 13.2,10.2 11.7,9.3 10.5,10.6 9.2,14 8,15.5 8.6,13.9 8.4,11.2 3.2,11.3
-        	1.3,10.8 3.7,10.5 4.6,9.6 3.4,6.7 2,5 1.6,3.2 3.1,4.8 4.2,5.3 4.8,5.3 5.8,3.9 6.8,1.7 8.6,0 8.3,1.2 8,3.1 8,3.8 13.1,3.8
-        	15.5,4.3 11.7,5.1 11.5,6.1 14,10.1 "/>
-        <circle id="circle3355" class="st2" cx="8" cy="7.5" r="2.2"/>
+        <circle id="st1" cx="8" cy="7.5" r="4.9"/>
+        <g id="spikes">
+            <polygon points="12.7,1.2 10.8,1.6 8.9,2.9 10.4,3.5"/>
+            <polygon points="15.3,8.2 13.9,7.5 12.7,7.5 12.5,5.7 14.9,7.5"/>
+            <polygon points="11.7,14.4 11.3,12.6 10.6,11.6 11.8,10.6 11.7,12.7"/>
+            <polygon points="3.6,13.2 4.9,12.6 5.8,11.7 6.7,12.1 5.1,13"/>
+            <polygon points="1.7,7.4 0,6.7 1.5,8.1 3.3,8.6 3.3,7.4"/>
+            <polygon points="5.2,0.6 5.2,2.3 5.8,3.5 4.2,4.6 4.1,2.5"/>
+            <polygon points="14.2,11.6 13.2,10.2 11.7,9.3 10.5,10.6 9.2,14 8,15.5 8.6,13.9 8.4,11.2 3.2,11.3
+            1.3,10.8 3.7,10.5 4.6,9.6 3.4,6.7 2,5 1.6,3.2 3.1,4.8 4.2,5.3 4.8,5.3 5.8,3.9 6.8,1.7 8.6,0 8.3,1.2 8,3.1 8,3.8 13.1,3.8
+            15.5,4.3 11.7,5.1 11.5,6.1 14,10.1"/>
+        </g>
+        <circle id="st2" cx="8" cy="7.5" r="2.2"/>
         </g>"##);
 
     // Apple definition.
     buffer.extend_from_slice(br##"
         <g id="apple">
         <style type="text/css">
-        	.main{fill:#CF0000;}
-        	.leaf{fill:#00AA00;}
-        	.stem{fill:#3F1D00;}
+        	#main{fill:#CF0000;}
+        	#leaf{fill:#00AA00;}
+        	#stem{fill:#3F1D00;}
         </style>
 
-        <path class="main" d="M15.4,6.6c0-0.5-0.1-1.5-0.3-2.2c-0.2-0.6-1.1-1.5-1.7-1.9c-0.5-0.3-1.7-0.7-2.3-0.8C10.2,1.6,8.8,1.4,8,1.4
+        <path id="main" d="M15.4,6.6c0-0.5-0.1-1.5-0.3-2.2c-0.2-0.6-1.1-1.5-1.7-1.9c-0.5-0.3-1.7-0.7-2.3-0.8C10.2,1.6,8.8,1.4,8,1.4
             c-0.7,0-2.5,0-3.2,0.1c-0.6,0.1-2,0.3-2.5,0.7c-0.4,0.3-1.2,1-1.4,1.4C0.6,3.9,0.2,4.9,0.1,5.4c-0.2,1.1-0.1,1.7,0,2.3
             c0.1,0.7,0.2,1.8,0.6,2.7c0.4,1.1,1,1.9,1.5,2.5c0.5,0.5,1.7,1.5,2.4,1.8c0.7,0.3,2.3,0.7,3.1,0.7c0.9,0,2.7-0.3,3.5-0.7
             c0.6-0.3,1.6-1.2,2.1-1.7C14.8,11.1,15.3,8.3,15.4,6.6z"/>
 
-        <path class="leaf" d="M12.3,0.7c-0.2-0.1-0.8-0.5-1.5-0.3c-0.1,0-0.3,0.1-0.5,0.2C9.9,0.9,9.8,1.1,9.5,1.7C9.2,2.1,9.1,2.3,8.9,2.5
+        <path id="leaf" d="M12.3,0.7c-0.2-0.1-0.8-0.5-1.5-0.3c-0.1,0-0.3,0.1-0.5,0.2C9.9,0.9,9.8,1.1,9.5,1.7C9.2,2.1,9.1,2.3,8.9,2.5
             C8.5,2.8,7.8,3,7.6,2.8C7.3,2.5,7.7,1.6,8,1.1c0.2-0.3,0.6-0.7,1.2-1C10.7-0.4,12.2,0.6,12.3,0.7z"/>
 
-        <path class="stem" d="M7.4,2.8C7.1,2.5,6.5,1.4,6.5,1.4c0-0.1,0-0.2,0.1-0.2l0.2-0.1c0.2-0.1,0.4,0,0.4,0.1c0,0,0.6,1,0.6,1.4
+        <path id="stem" d="M7.4,2.8C7.1,2.5,6.5,1.4,6.5,1.4c0-0.1,0-0.2,0.1-0.2l0.2-0.1c0.2-0.1,0.4,0,0.4,0.1c0,0,0.6,1,0.6,1.4
             c0,0-0.1,0.1-0.2,0.2C7.6,2.8,7.4,2.8,7.4,2.8z"/>
         </g>"##);
 
@@ -339,14 +335,18 @@ fn make_svg (input: &Path, settings: Settings, output: &PathBuf) {
     buffer.extend_from_slice(br##"
     <g id="flower">
     <style type="text/css">
-    	.petals{fill:url(#gradientpetals);}
-    	.middle{fill:url(#gradientmiddle);}
+    	#petals{fill:url(#gradientpetals);}
+    	#middle{fill:url(#gradientmiddle);}
     </style>
     <linearGradient id="gradientpetals" gradientUnits="userSpaceOnUse" x1="14.8102" y1="11.872" x2="1.1024" y2="3.9578">
-		<stop  offset="0" style="stop-color:#FFFFFF"/>
+		<stop offset="0" style="stop-color:#FFFFFF"/>
 		<stop  offset="1" style="stop-color:#E7E7E7"/>
 	</linearGradient>
-	<path id="petals" class="petals" d="M9.4,3.3L10,3.5c0,0,0.4-1.1,0.7-1.4c0.2-0.3,0.7-0.7,1-0.8c0.3-0.1,1,0.1,1.2,0.3
+    <linearGradient id="gradientmiddle" gradientUnits="userSpaceOnUse" x1="10.4078" y1="9.4658" x2="5.5449" y2="6.6581">
+        <stop offset="0" style="stop-color:#E9C300"/>
+        <stop offset="1" style="stop-color:#FFF900"/>
+    </linearGradient>
+	<path id="petals" d="M9.4,3.3L10,3.5c0,0,0.4-1.1,0.7-1.4c0.2-0.3,0.7-0.7,1-0.8c0.3-0.1,1,0.1,1.2,0.3
 		c0.3,0.2,0.5,0.9,0.5,1.2c0,0.4-0.6,1.1-0.8,1.4c-0.2,0.3-1.1,0.9-1.1,0.9l0.3,0.4c0,0,0.8-0.4,1.1-0.6c0.4-0.2,1.4-0.3,1.8-0.2
 		c0.3,0.1,0.8,0.7,1,0.9c0.2,0.3,0.3,1.1,0.3,1.5c0,0.4-0.5,1.1-0.9,1.3c-0.3,0.2-1.1,0-1.5,0.1c-0.1,0-0.2,0.1-0.2,0.1s1,0.7,1.2,1
 		c0.2,0.3,0.5,0.9,0.6,1.2c0,0.2-0.1,0.7-0.2,0.9c-0.1,0.2-0.6,0.5-0.8,0.6c-0.3,0.1-0.9,0-1.1-0.1c-0.3-0.1-0.8-0.8-0.8-0.8l-0.4,0
@@ -359,17 +359,11 @@ fn make_svg (input: &Path, settings: Settings, output: &PathBuf) {
 		c0.2,0.1,0.7,0.4,0.7,0.4l0.2-0.3c0,0-0.4-0.7-0.5-0.9C3.3,2.3,3.3,1.7,3.3,1.4c0.1-0.3,0.4-0.7,0.6-0.9C4.2,0.3,5,0.2,5.4,0.2
 		C5.7,0.3,6.1,0.7,6.3,1c0.2,0.4,0.5,1.5,0.5,1.5l0.4,0c0,0-0.1-1.1,0-1.5c0.1-0.3,0.4-0.8,0.7-1c0.3-0.1,1-0.1,1.3,0.1
 		c0.2,0.1,0.4,0.5,0.4,0.8C9.7,1.5,9.4,3.3,9.4,3.3z"/>
-	<linearGradient id="gradientmiddle" gradientUnits="userSpaceOnUse" x1="10.4078" y1="9.4658" x2="5.5449" y2="6.6581">
-		<stop  offset="0" style="stop-color:#E9C300"/>
-		<stop  offset="1" style="stop-color:#FFF900"/>
-	</linearGradient>
-	<ellipse id="middle" class="middle" cx="8" cy="8" rx="2.6" ry="3.3"/>
+	<ellipse id="middle" cx="8" cy="8" rx="2.6" ry="3.3"/>
     </g>
     "##);
 
-    // buffer.extend_from_slice(format!("</defs>\r\n\t<rect width=\"100%\" height=\"100%\" style=\"fill: {};\" />\r\n",
-    //                          settings.ground).as_bytes());
-    buffer.extend_from_slice(b"</defs>\r\n\t<rect width=\"100%\" height=\"100%\" style=\"fill: url(#img1);\" fill=\"url(#img1)\" />\r\n");
+    buffer.extend_from_slice(b"</defs>\r\n\t<rect width=\"100%\" height=\"100%\" fill=\"url(#img1)\" />\r\n");
 
     // Polygons.
     buffer.extend_from_slice(format!("\t<path fill-rule=\"evenodd\" fill=\"{}\" d=\"",
