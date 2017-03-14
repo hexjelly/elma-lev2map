@@ -31,6 +31,7 @@ struct Settings<'a> {
 
 fn main () {
     // Take care of command line arguments.
+    // TODO: put into external yaml file
     let matches = App::new("elma-lev2map")
                             .version(VERSION)
                             .author("Roger Andersen <hexjelly@hexjelly.com>")
@@ -171,6 +172,7 @@ fn main () {
     let scale = matches.value_of("scale").unwrap().parse::<usize>().unwrap();
     let pad = matches.value_of("pad").unwrap().parse::<usize>().unwrap();
     let mut width = 0;
+    // TODO: use clap default thing doh
     if let Some(val) = matches.value_of("width") {
         width = val.parse::<usize>().unwrap();
     };
@@ -315,17 +317,20 @@ fn make_svg (input: &Path, settings: Settings, output: &PathBuf) {
         }
 
         // SVG objects
-        match object.object_type {
-            ObjectType::Apple { .. } => buffer.extend_from_slice(format!("<use x=\"{}\" y=\"{}\" xlink:href=\"#apple\" />\r\n", x - OBJECT_RADIUS * settings.scale as f64, y - OBJECT_RADIUS * settings.scale as f64).as_bytes()),
-            ObjectType::Killer => buffer.extend_from_slice(format!("<use x=\"{}\" y=\"{}\" xlink:href=\"#killer\" />\r\n", x - OBJECT_RADIUS * settings.scale as f64, y - OBJECT_RADIUS * settings.scale as f64).as_bytes()),
-            ObjectType::Exit => buffer.extend_from_slice(format!("<use x=\"{}\" y=\"{}\" xlink:href=\"#flower\" />\r\n", x - OBJECT_RADIUS * settings.scale as f64, y - OBJECT_RADIUS * settings.scale as f64).as_bytes()),
-            _ => {}
-        };
+        if settings.complexity == "mix" || settings.complexity == "complex" {
+            match object.object_type {
+                ObjectType::Apple { .. } => buffer.extend_from_slice(format!("<use x=\"{}\" y=\"{}\" xlink:href=\"#apple\" />\r\n", x - OBJECT_RADIUS * settings.scale as f64, y - OBJECT_RADIUS * settings.scale as f64).as_bytes()),
+                ObjectType::Killer => buffer.extend_from_slice(format!("<use x=\"{}\" y=\"{}\" xlink:href=\"#killer\" />\r\n", x - OBJECT_RADIUS * settings.scale as f64, y - OBJECT_RADIUS * settings.scale as f64).as_bytes()),
+                ObjectType::Exit => buffer.extend_from_slice(format!("<use x=\"{}\" y=\"{}\" xlink:href=\"#flower\" />\r\n", x - OBJECT_RADIUS * settings.scale as f64, y - OBJECT_RADIUS * settings.scale as f64).as_bytes()),
+                _ => {}
+            };
+        }
     }
 
     buffer.extend_from_slice(b"</svg>");
 
     // Write buffer to file.
+    // TODO: remove unwraps doh
     let mut file = File::create(&output).unwrap();
     file.write_all(&buffer).unwrap();
     println!("Wrote SVG file: {:?}", output);
