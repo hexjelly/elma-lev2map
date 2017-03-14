@@ -4,5 +4,5 @@ version = "0.1.0"
 authors = ["Roger Andersen <hexjelly@hexjelly.com>"]
 
 [dependencies]
-elma = "^0.1.0"
-clap = "^2.6.0"
+elma = "^0.1.3"
+clap = { version = "~2.19.0", features = ["yaml"] }

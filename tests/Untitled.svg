@@ -1,12 +1,15 @@
 <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 945.219145871788 362.2923777019341">
 <defs><pattern id="ground" patternUnits="userSpaceOnUse" x="0" y="0" width="20" height="15.5" viewBox="0 0 120 93">
+
 <style type="text/css">
 #ground-shadow{fill:#000030;}
 #ground-main{fill:#181048;}
 #ground-hl{fill:#00089C;}
 </style>
+
 <rect x="0" y="0" style="fill:#000" width="120" height="93"/>
+
 <g id="ground-shadow">
 <path d="M13.6,87.5c3-0.2,7.6-1.4,7.9-5.6c0.4-5.6,0-10.3,0.8-14.2c0.6-3,3.2-8.4-5.8-8.4c-6.7,0-14.9,0.9-16.1,6.6s1.4,8.3,1.9,12.7C2.8,83.1,3,88.4,13.6,87.5z"/>
 <path d="M47.8,93c2.5-1.7,4.9-2.4,8.7-4.1c5.1-2.2,8.5-5.3,11.2-9.6c2.7-4.3,6.3-3.2,9.1-4.1s5.4-3.3,4.4-6.5s-4.3-6-7.2-3.9c-2.8,2.1-8.1,10.2-17.7,9.9c-10.8-0.3-10.3-8.6-10.9-11.1c-0.6-2.6-3-4.1-7.2-2.4s-11.9,4.1-11.9,12.2c0,7,0.2,14.8,2.4,19.6H47.8z"/>

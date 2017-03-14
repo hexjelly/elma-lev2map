@@ -1,0 +1,72 @@
+name: Lev2Map
+version: "0.1.0"
+author: Roger Andersen <hexjelly@hexjelly.com>
+about: Convert Elasto Mania level files to images
+args:
+  - input:
+      value_name: FILE
+      help: Input level file
+      required: true
+      index: 1
+  - output:
+      short: o
+      long: output
+      value_name: PATH
+      help: "Output path. [default: <input>.svg|png]"
+      takes_value: true
+  - svg:
+      help: "Sets the output image type. 'svg-lo': flat color, simple circle objects. 'svg-hi': detailed svg textures, pictures, etc. 'svg-mix': both svg options together. 'png': rasterized PNG."
+      takes_value: true
+      possible_values: [svg-lo, svg-hi, svg-mix, png]
+      default_value: svg-hi
+  - ground:
+      short: g
+      value_name: COLOR
+      help: Ground fill color. Accepts RGB(a), hex or named colors.
+      takes_value: true
+      default_value: "#181048"
+  - sky:
+      short: s
+      value_name: COLOR
+      help: Sky fill color. Accepts RGB(a), hex or named colors.
+      takes_value: true
+      default_value: "#3078bc"
+  - apple:
+      short: a
+      value_name: COLOR
+      help: Apple fill color. Accepts RGB(a), hex or named colors.
+      takes_value: true
+      default_value: "#f00"
+  - flower:
+      short: f
+      value_name: COLOR
+      help: Flower fill color. Accepts RGB(a), hex or named colors.
+      takes_value: true
+      default_value: "#fff"
+  - killer:
+      short: k
+      value_name: COLOR
+      help: Killer fill color. Accepts RGB(a), hex or named colors.
+      takes_value: true
+      default_value: "#000"
+  - player:
+      short: p
+      value_name: COLOR
+      help: Player fill color. Accepts RGB(a), hex or named colors.
+      takes_value: true
+      default_value: "#0f0"
+  - pad:
+      value_name: SIZE
+      help: Image padding.
+      takes_value: true
+      default_value: "10"
+  - scale:
+      value_name: SIZE
+      help: Image scale.
+      takes_value: true
+      default_value: "20"
+  - stroke:
+      value_name: SIZE
+      help: Object line stroke.
+      takes_value: true
+      default_value: "0"
